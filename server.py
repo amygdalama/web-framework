@@ -8,14 +8,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         try:
-            # os assumes paths begining with '/' are absolute
-            print self.path
-            if self.path.startswith('/'):
-                self.path = self.path[1:]
-            if self.path == '' or os.path.isdir(self.path):
-                filename = os.path.join(self.path, 'index.html')
-            else:
-                filename = self.path
+            filename = map_url(self.path)
             f = open(filename)
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
@@ -25,6 +18,16 @@ class MyHandler(BaseHTTPRequestHandler):
         except IOError:
             self.send_error(404, 'File not found: %s' % filename)
         return
+
+def map_url(path):
+    # os assumes paths begining with '/' are absolute
+    if path.startswith('/'):
+        path = path[1:]
+    if path == '' or os.path.isdir(path):
+        filename = os.path.join(path, 'index.html')
+    else:
+        filename = path
+    return filename
 
 def parse_args():
     parser = argparse.ArgumentParser()
