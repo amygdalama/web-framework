@@ -25,18 +25,19 @@ class MyHandler(BaseHTTPRequestHandler):
                 module_name, func_name = func_info
                 module = __import__(module_name)
                 func = getattr(module, func_name)
-                func(self, regex_match)
+                content = func(self, regex_match)
             else:
                 if self.path == '' or os.path.isdir(self.path):
                     filename = os.path.join(self.path, 'index.html')
                 else:
                     filename = self.path
                 f = open(filename)
-                self.send_response(200)
-                self.send_header('Content-type', 'text/html')
-                self.end_headers()
-                self.wfile.write(f.read())
+                content = f.read()
                 f.close()
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(content)
         except IOError:
             self.send_error(404, 'File not found: %s' % filename)
         return
