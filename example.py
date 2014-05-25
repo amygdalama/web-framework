@@ -1,4 +1,4 @@
-import server
+import framework
 
 def hello(server, match):
     server.send_response(200)
@@ -13,6 +13,6 @@ def user(server, match):
     server.wfile.write("This is %s's user page!" % match.group(1))
 
 if __name__ == '__main__':
-    server.ROUTES['\Auser/([a-zA-Z0-9]+)\Z'] = ('example', 'user')
-    server.ROUTES['hello'] = ('example', 'hello')
-    server.run()
+    framework.ROUTES['\Auser/([a-zA-Z0-9]+)\Z'] = ('example', 'user')
+    framework.ROUTES['hello'] = ('example', 'hello')
+    framework.run()
