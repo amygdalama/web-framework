@@ -1,7 +1,7 @@
 import framework
 
 def hello(match):
-    return "Hello world from routed function land!!!!"
+    return "Hello world!"
 
 def user(match):
     return "This is %s's user page!" % match.group(1)
