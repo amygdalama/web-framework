@@ -8,15 +8,17 @@ class MyHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         try:
-            if self.path.endswith('/'):
-                filename = os.path.join(os.curdir, 'index.html')
+            # os.path.join assumes paths begining with '/' are absolute
+            if self.path.startswith('/'):
+                self.path = self.path[1:]
+            filename = os.path.join(self.path, 'index.html')
             f = open(filename)
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             self.wfile.write(f.read())
             f.close()
-        except IOError, e:
+        except IOError:
             self.send_error(404, 'File not found: %s' % filename)
         return
 
