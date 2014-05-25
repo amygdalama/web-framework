@@ -8,10 +8,14 @@ class MyHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         try:
-            # os.path.join assumes paths begining with '/' are absolute
+            # os assumes paths begining with '/' are absolute
+            print self.path
             if self.path.startswith('/'):
                 self.path = self.path[1:]
-            filename = os.path.join(self.path, 'index.html')
+            if self.path == '' or os.path.isdir(self.path):
+                filename = os.path.join(self.path, 'index.html')
+            else:
+                filename = self.path
             f = open(filename)
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
