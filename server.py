@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 PORT = 8000
@@ -8,6 +9,7 @@ class MyHandler(BaseHTTPRequestHandler):
     def __init__(self, request, client_address, server):
         self.router = Router(self)
         self.router.add('hello', hello)
+        self.router.add('\Auser/([a-zA-Z0-9]+)\Z', user)
         BaseHTTPRequestHandler.__init__(self, request, client_address, server)
 
     def do_GET(self):
@@ -16,9 +18,10 @@ class MyHandler(BaseHTTPRequestHandler):
             if self.path.startswith('/'):
                 self.path = self.path[1:]
 
-            func = self.router.route(self.path)
-            if func:
-                func(self)
+            routing_info = self.router.route(self.path)
+            if routing_info:
+                func, match = routing_info
+                func(self, match)
             else:
                 if self.path == '' or os.path.isdir(self.path):
                     filename = os.path.join(self.path, 'index.html')
@@ -43,13 +46,22 @@ class Router(object):
         self.routes[route] = func
 
     def route(self, route):
-        return self.routes.get(route, None)
+        for pattern in self.routes:
+            match = re.match(pattern, route)
+            if match:
+                return self.routes[pattern], match
 
-def hello(server):
+def hello(server, match):
     server.send_response(200)
     server.send_header('Content-type', 'text/html')
     server.end_headers()
     server.wfile.write("Hello world from routed function land!!!!")
+
+def user(server, match):
+    server.send_response(200)
+    server.send_header('Content-type', 'text/html')
+    server.end_headers()
+    server.wfile.write("This is %s's user page!" % match.group(1))
 
 def parse_args():
     parser = argparse.ArgumentParser()
