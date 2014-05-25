@@ -58,7 +58,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def main():
+def run():
     try:
         args = parse_args()
         httpd = HTTPServer(('', args.port), MyHandler)
@@ -68,4 +68,4 @@ def main():
         httpd.socket.close()
 
 if __name__ == '__main__':
-    main()
+    run()
