@@ -1,4 +1,7 @@
+import argparse
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+
+PORT = 8000
 
 class MyHandler(BaseHTTPRequestHandler):
 
@@ -9,10 +12,17 @@ class MyHandler(BaseHTTPRequestHandler):
         self.wfile.write("Hello World!")
         return
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('port', nargs='?', type=int, default=PORT,
+            help='port number')
+    args = parser.parse_args()
+    return args
+
 def main():
     try:
-        PORT = 8000
-        httpd = HTTPServer(('', PORT), MyHandler)
+        args = parse_args()
+        httpd = HTTPServer(('', args.port), MyHandler)
         httpd.serve_forever()
     except KeyboardInterrupt:
         print 'Shutting down the web server...'
