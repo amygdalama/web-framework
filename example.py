@@ -1,9 +1,9 @@
 import framework
 
-def hello(server, match):
+def hello(match):
     return "Hello world from routed function land!!!!"
 
-def user(server, match):
+def user(match):
     return "This is %s's user page!" % match.group(1)
 
 if __name__ == '__main__':

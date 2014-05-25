@@ -25,7 +25,7 @@ class MyHandler(BaseHTTPRequestHandler):
                 module_name, func_name = func_info
                 module = __import__(module_name)
                 func = getattr(module, func_name)
-                content = func(self, regex_match)
+                content = func(regex_match)
             else:
                 if self.path == '' or os.path.isdir(self.path):
                     filename = os.path.join(self.path, 'index.html')
